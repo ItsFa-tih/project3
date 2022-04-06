@@ -1,4 +1,5 @@
 from io import StringIO
+from time import time
 import streamlit as st
 from dataclasses import dataclass
 from datetime import datetime
@@ -13,6 +14,7 @@ import json
 from web3 import Web3
 from dotenv import load_dotenv
 from pathlib import Path
+import pandas as pd
 
 # Loading env variable
 load_dotenv()
@@ -64,15 +66,34 @@ account = accounts[0]
 
 candidate_account = st.selectbox("Select Candiate Account", options=accounts)
 
-uploaded_file:str = st.file_uploader("Choose a file")
-# if uploaded_file:
-#     for line in uploaded_file:
-#         st.write(line)
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file:
+    for line in uploaded_file:
+        st.write(line)
 resume_details = st.text_input("Resume Details", value="My Block Chain Resume Upload for: ")
 
   
 if st.button("Add your resume to the Block"):
-      contract.functions.uploadResume(candidate_account, resume_details).transact({'from': account, 'gas': 1000000})
+      contract.functions.loadResume(candidate_account, resume_details).transact({'from': account, 'gas': 1000000})
+      st.balloons()
+      st.success("Your resume has been uploaded to My Block Chain Resume services")
     
+   
     # new_block=Block(uploaded_file=Block, creator_id=10)
     # st.write(new_block)
+
+st.sidebar.markdown("## My Blockchain Resume Ledger")
+
+
+resume_id = st.sidebar.number_input(
+    "Enter a Resume Token ID to display", value=0, step=1)
+if st.sidebar.button("Display Resume"):
+    #Brings up the Resume Owner
+    resume_owner = contract.functions.ownerOf(resume_id).call()
+    st.sidebar.write(f"The resume owner is {resume_owner}")
+
+    # Pulls the selected Resume metadata
+    resume_uri = contract.functions.tokenURI(resume_id).call()
+    st.sidebar.write(f"The resume's tokenURI metadata is: {resume_uri}")
+
+    

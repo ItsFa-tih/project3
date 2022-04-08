@@ -60,10 +60,10 @@ st.markdown("## Start by uploading your resume then hit ' Add your resume to the
 #----------------#
 # Uploading Resume
 #----------------#
+
+# Connection to ganache blockchain
 accounts = w3.eth.accounts
-
-account = accounts[0]
-
+account = accounts[1]
 candidate_account = st.selectbox("Select Candiate Account", options=accounts)
 
 uploaded_file = st.file_uploader("Choose a file")
@@ -90,10 +90,10 @@ resume_id = st.sidebar.number_input(
 if st.sidebar.button("Display Resume"):
     #Brings up the Resume Owner
     resume_owner = contract.functions.ownerOf(resume_id).call()
-    st.sidebar.write(f"The resume owner is {resume_owner}")
+    st.sidebar.write("### The resume owner is:\n" f"\n{resume_owner}")
 
     # Pulls the selected Resume metadata
     resume_uri = contract.functions.tokenURI(resume_id).call()
-    st.sidebar.write(f"The resume's tokenURI metadata is: {resume_uri}")
+    st.sidebar.write("### Resume details:\n" f"\n{resume_uri}")
 
     
